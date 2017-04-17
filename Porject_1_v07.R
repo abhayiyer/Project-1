@@ -180,15 +180,6 @@ GSEA_SignalToNoise <- function(GeneArrayData, Category_Label, Unique_Samples_Nam
   Experimental_SignalToNoiSe_Matrix_ <- matrix(0,nrow=NumGenes_,ncol=100)
   Experimental_SignalToNoiSe_Matrix_ <- Signal/Noise
   
-  File <- "./Histogram/Histogram Comparison.jpg"
-  dir.create(dirname(File), showWarnings = FALSE)
-  
-  jpeg(File)
-  par(mfrow=c(1,2))
-  
-  hist(GSEA_S2N$Random_SignalToNoiseRatio,main = "Histogram of the analysis with 100 Random permutations",xlab = "Random Ratio",xlim = c(-1,1))
-  hist(GSEA_S2N$Experimental_SignalToNoiSe_Matrix,main = "Histogram of the analysis of the given sample",xlab = "Experimental Ratio",xlim = c(-1,1))
-  dev.off()
   return(list(Random_SignalToNoiseRatio = SignalToNoiSe_Matrix_, Experimental_SignalToNoiSe_Matrix = Experimental_SignalToNoiSe_Matrix_))
   
   }
@@ -247,4 +238,15 @@ return(max_norm_res)
 ReadGeneListInfo <- ReadGeneList("./Leukemia.csv")
 RankedList <- RankedList_TwoStates(ReadGeneListInfo$data, ReadGeneListInfo$Category_Label,ReadGeneListInfo$Unique_Samples_Name, ReadGeneListInfo$GeneList_L)
 GSEA_S2N <- GSEA_SignalToNoise(ReadGeneListInfo$data, ReadGeneListInfo$Category_Label,ReadGeneListInfo$Unique_Samples_Name) 
+
+File <- "./Histogram/Histogram Comparison.jpg"
+dir.create(dirname(File), showWarnings = FALSE)
+
+jpeg(File)
+par(mfrow=c(1,2))
+
+hist(GSEA_S2N$Random_SignalToNoiseRatio,main = "Histogram of the analysis with 100 Random permutations",xlab = "Random Ratio",xlim = c(-1,1))
+hist(GSEA_S2N$Experimental_SignalToNoiSe_Matrix,main = "Histogram of the analysis of the given sample",xlab = "Experimental Ratio",xlim = c(-1,1))
+dev.off()
+
 ReadGeneSetInfo <- ReadGeneSet("./pathways.csv", RankedList$Ranked_Gene_List)
