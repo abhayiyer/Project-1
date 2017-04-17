@@ -190,6 +190,7 @@ ReadGeneSet <- function(GeneSetData, RankedGeneList){
   readFile <- as.matrix(readFile)
   NumOfGeneSets <- nrow(readFile)
   max_norm_res <- vector()
+  ks <- vector()
   GeneSet_S_Num <- 1
   RunningIndex <- matrix((0),nrow=1,ncol=2)
   while(GeneSet_S_Num <= NumOfGeneSets)
@@ -225,12 +226,13 @@ ReadGeneSet <- function(GeneSetData, RankedGeneList){
     abline(v=arg.ES,col="red")
     dev.off()
    
-    Norm_Res <- RES/mean(RES)
+    Norm_Res <- RES/0.003799392
+    ks[GeneSet_S_Num] <- (ks.test(RES,GSEA_S2N$Random_SignalToNoiseRatio[GeneSet_S_Num]))$p.value
     print(paste("MAx_Norm_Res:",max(Norm_Res),sep=""))
     max_norm_res[GeneSet_S_Num] <-max(Norm_Res)
     GeneSet_S_Num = GeneSet_S_Num + 1
   }
-return(max_norm_res)  
+return(list(readFile[,1],max_norm_res,ks))
 }
 
 ################################################################################################
@@ -250,3 +252,11 @@ hist(GSEA_S2N$Experimental_SignalToNoiSe_Matrix,main = "Histogram of the analysi
 dev.off()
 
 ReadGeneSetInfo <- ReadGeneSet("./pathways.csv", RankedList$Ranked_Gene_List)
+dd  <-  as.data.frame(matrix(unlist(ReadGeneSetInfo), nrow=length(unlist(ReadGeneSetInfo[1]))))
+colnames(dd) <- c("Gene Sets", "NES", "P-value")
+NES_arranged<- arrange(dd,desc(NES))
+
+#required output sorted by NES
+print(NES_arranged)
+
+
